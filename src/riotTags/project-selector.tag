@@ -49,7 +49,7 @@ project-selector
             i.icon-discord
         a(href="https://twitter.com/ctjsrocks" title="{voc.twitter}" onclick="{openExternal('https://twitter.com/ctjsrocks')}")
             i.icon-twitter
-        .inlineblock v{nw.App.manifest.version}.
+        .inlineblock v{ctjsVersion}.
         |
         |
         // as itch releases are always in sync with the fetched version number, let's route users to itch.io page
@@ -59,6 +59,7 @@ project-selector
     script.
         const fs = require('fs-extra'),
               path = require('path');
+        this.ctjsVersion = require(path.join(process.cwd(), 'package.json')).version;
         this.requirePath = path;
         this.namespace = 'intro';
         this.mixin(window.riotVoc);
@@ -72,7 +73,7 @@ project-selector
         this.on('unmount', () => {
             window.signals.off('hideProjectSelector', hideProjectSelector);
         });
-        this.projectSplash = '/data/img/notexture.png';
+        this.projectSplash = 'data/img/notexture.png';
         this.newVersion = false;
 
         // Loads recently opened projects
@@ -89,7 +90,6 @@ project-selector
         this.updatePreview = projectPath => e => {
             this.projectSplash = 'file://' + path.dirname(projectPath) + '/' + path.basename(projectPath, '.ict') + '/img/splash.png';
         };
-
         /**
          * Creates a mew project.
          * Technically it creates an empty project in-memory, then saves it to a directory.
@@ -97,7 +97,7 @@ project-selector
          */
         this.newProject = async (way, codename) => {
             var projectData = {
-                ctjsVersion: nw.App.manifest.version,
+                ctjsVersion: this.ctjsVersion,
                 notes: '/* empty */',
                 libs: {
                     place: {
@@ -218,7 +218,7 @@ project-selector
             .then(data => data.json())
             .then(json => {
                 if (!json.errors) {
-                    if (nw.App.manifest.version != json.latest) {
+                    if (this.ctjsVersion != json.latest) {
                         this.newVersion = this.voc.latestVersion.replace('$1', json.latest);
                         this.update();
                     }
@@ -230,7 +230,8 @@ project-selector
         }, 0);
 
         this.openExternal = link => e => {
-            nw.Shell.openExternal(link);
+            const {shell} = require('electron');
+            shell.openExternal(link);
             e.stopPropagation();
             e.preventDefault();
         };

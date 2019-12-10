@@ -23,5 +23,5 @@ const createWindows = () => {
     mainWindow.webContents.openDevTools();
 };
 
-
+console.log(electron.app.getAppPath());
 electron.app.on('ready', createWindows);
