@@ -21,7 +21,7 @@ const path = require('path'),
       streamQueue = require('streamqueue'),
       notifier = require('node-notifier'),
       fs = require('fs-extra'),
-      NwBuilder = require('nw-builder'),
+      runElectron = require("gulp-run-electron"),
 
       spawnise = require('./node_requires/spawnise');
 
@@ -30,9 +30,9 @@ const npm = (/^win/).test(process.platform) ? 'npm.cmd' : 'npm';
 
 const pack = require('./app/package.json');
 
-const nwVersion = '0.34.1',
+const electronVersion = '7.1.2',
       platforms = ['osx64', 'win32', 'win64', 'linux32', 'linux64'],
-      nwFiles = ['./app/**', '!./app/export/**', '!./app/projects/**', '!./app/exportDesktop/**', '!./app/cache/**', '!./app/.vscode/**', '!./app/JamGames/**'];
+      appFiles = ['./app/**', '!./app/export/**', '!./app/projects/**', '!./app/exportDesktop/**', '!./app/cache/**', '!./app/.vscode/**', '!./app/JamGames/**'];
 
 var channelPostfix = argv.channel || false;
 
@@ -200,19 +200,9 @@ const lintJS = () => gulp.src(['./src/js/**/*.js', '!./src/js/3rdparty/**/*.js',
 
 const lint = gulp.series(lintJS, lintStylus);
 
-const launchNw = () => { // makes a loop that keeps ct.js open if it was closed, either by a user or by assets' changes
-    var nw = new NwBuilder({
-        files: nwFiles,
-        version: nwVersion,
-        platforms,
-        flavor: 'sdk'
-    });
-    return nw.run()
-    .catch(function (error) {
-        showErrorBox();
-        console.error(error);
-    })
-    .then(launchNw);
+const launchApp = () => {
+    gulp.src('./app')
+    .pipe(runElectron());
 };
 
 const docs = async () => {
@@ -324,23 +314,14 @@ declare namespace`))
     .pipe(gulp.dest('./app/data/typedefs/'));
 const bakeTypedefs = gulp.series([bakeCtTypedefs, concatTypedefs]);
 
-
 const build = gulp.parallel([compilePug, compileStylus, compileScripts, copyRequires, bakeTypedefs]);
 
-
-const nwPackages = async () => {
+const bakePackages = async () => {
+    const builder = require('electron-builder');
     await fs.remove(path.join('./build', `ctjs - v${pack.version}`));
-    var nw = new NwBuilder({
-        files: nwFiles,
-        platforms,
-        version: nwVersion,
-        flavor: 'sdk',
-        buildType: 'versioned',
-        // forceDownload: true,
-        zip: false,
-        macIcns: './app/ct.ide.icns'
+    await builder.build({// @see https://github.com/electron-userland/electron-builder/blob/master/packages/app-builder-lib/src/packagerApi.ts
+        projectDir: './app'
     });
-    await nw.build();
 };
 
 // a workaround for https://github.com/nwjs-community/nw-builder/issues/289
@@ -463,7 +444,7 @@ const packages = gulp.series([
     build,
     docs,
     patronsCache,
-    nwPackages,
+    bakePackages,
     fixSymlinks,
     fixPermissions,
     examples,
@@ -483,7 +464,7 @@ const deploy = gulp.series([packages, deployOnly]);
 
 const launchDevMode = done => {
     watch();
-    launchNw();
+    launchApp();
     done();
 };
 const defaultTask = gulp.series(build, launchDevMode);

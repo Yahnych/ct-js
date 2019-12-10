@@ -1,23 +1,14 @@
 {
-  "main": "index.html",
-  "name": "ctjs",
-  "description": "ctjs",
+  "main": "index.js",
+  "name": "ct.js",
+  "description": "ct.js — a free 2D game engine",
   "version": "1.2.1",
   "homepage": "https://ctjs.rocks/",
   "license": "MIT",
   "user-agent": "ct.js game engine %name/%ver (%osinfo) NW.js/%nwver AppleWebkit/%webkit_ver Chromium/%chromium_ver",
   "window": {
-    "icon": "ct_ide.png",
     "toolbar": true,
-    "frame": true,
-    "width": 1024,
-    "height": 720,
-    "position": "center",
-    "min_width": 380,
-    "min_height": 380,
-    "resizable": true,
-    "fullscreen": false,
-    "title": "ctjs"
+    "frame": true
   },
   "repository": {
     "type": "git",

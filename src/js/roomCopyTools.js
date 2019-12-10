@@ -1,5 +1,4 @@
 (function () {
-    const gui = require('nw.gui');
     const clickThreshold = 16;
     const glob = require('./data/node_requires/glob');
 
