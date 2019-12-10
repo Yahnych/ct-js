@@ -1,12 +1,12 @@
 /* eslint-disable camelcase */
-const electron = require('electron');
-
-const createWindows = () => {
-    const mainWindow = new electron.BrowserWindow({
+const {app, dialog, BrowserWindow} = require('electron');
+let mainWindow;
+const createMainWindow = () => {
+    mainWindow = new BrowserWindow({
         width: 1024,
         height: 720,
-        min_width: 380,
-        min_height: 380,
+        minWidth: 380,
+        minHeight: 380,
         center: true,
         resizable: true,
 
@@ -21,7 +21,36 @@ const createWindows = () => {
     });
     mainWindow.loadFile('index.html');
     mainWindow.webContents.openDevTools();
+
+    mainWindow.on('close', e => {
+        e.preventDefault();
+        dialog.showMessageBox(mainWindow, {
+            type: 'question',
+            title: 'Exit confirmation',
+            message: 'Do you really want to quit?',
+            details: 'All the unsaved changes will be lost!',
+            buttons: ['Yes', 'No'],
+            defaultId: 1
+        }).then(res => {
+            if (res.response === 0){
+                //Yes button pressed
+                mainWindow.destroy();
+            }
+        });
+    });
 };
 
-console.log(electron.app.getAppPath());
-electron.app.on('ready', createWindows);
+app.on('ready', createMainWindow);
+
+
+app.on('window-all-closed', () => {
+    if (process.platform !== 'darwin') {
+        app.quit();
+    }
+});
+
+app.on('activate', () => {
+    if (mainWindow === null) {
+        createMainWindow();
+    }
+});
