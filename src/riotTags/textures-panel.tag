@@ -152,7 +152,7 @@ textures-panel.panel.view
                 imgHeight: 32,
                 closedStrip: true
             }
-            img.src = '/data/img/unknown.png';
+            img.src = 'data/img/unknown.png';
         };
 
         this.setUpPanel = e => {

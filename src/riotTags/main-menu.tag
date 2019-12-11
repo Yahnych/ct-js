@@ -109,7 +109,7 @@ main-menu.flexcol
         };
         this.ctClick = (e) => {
             this.refreshLatestProject();
-            catMenu.opened = true;
+            this.catMenu.opened = !this.catMenu.opened;
         };
         this.saveProject = () => {
             return fs.outputJSON(sessionStorage.projdir + '.ict', currentProject, {
@@ -161,32 +161,26 @@ main-menu.flexcol
         this.runProject = e => {
             runCtExport(currentProject, sessionStorage.projdir)
             .then(path => {
-                if (previewWindow) {
-                    var nwWin = nw.Window.get(previewWindow);
-                    nwWin.show();
-                    nwWin.focus();
+                if (!previewWindow.closed) {
+                    previewWindow.show();
+                    previewWindow.focus();
                     previewWindow.document.getElementById('thePreview').reload();
                     return;
                 }
-                nw.Window.open(`preview.html?title=${encodeURIComponent(currentProject.settings.title || 'ct.js game')}`, {
-                    new_instance: false,
-                    id: 'ctPreview',
-                    frame: true,
-                    fullscreen: false
-                }, function(newWin) {
-                    var wind = newWin.window;
-                    previewWindow = wind;
-                    newWin.once('loaded', e => {
-                        newWin.title = 'ct.IDE Debugger';
-                        const win = newWin.window;
-                        newWin.leaveFullscreen();
-                        newWin.maximize();
-                        var game = win.document.getElementById('thePreview');
-                        game.src = `http://localhost:${server.address().port}/`;
-                    });
-                    newWin.once('closed', e => {
-                        previewWindow = null;
-                    })
+                previewWindow = window.open(
+                    `preview.html?title=${encodeURIComponent(currentProject.settings.title || 'ct.js game')}&port=${server.address().port}`,
+                    'ctPreview',
+                    'nodeIntegration=yes,nodeIntegrationInSubFrames=yes,webviewTag=yes'
+                );
+                var wind = previewWindow.window;
+                previewWindow = wind;
+                previewWindow.once('loaded', e => {
+                    previewWindow.title = 'ct.IDE Debugger';
+                    const win = previewWindow.window;
+                    previewWindow.leaveFullscreen();
+                    previewWindow.maximize();
+                    var game = win.document.getElementById('thePreview');
+                    game.src = `http://localhost:${server.address().port}/`;
                 });
             })
             .catch(e => {
@@ -268,6 +262,7 @@ main-menu.flexcol
         this.catMenu = {
             items: [{
                 label: window.languageJSON.common.save,
+                icon: 'save',
                 click: this.saveProject
             }, {
                 label: this.voc.openIncludeFolder,
@@ -306,20 +301,24 @@ main-menu.flexcol
                 label: window.languageJSON.common.language,
                 submenu: languageSubmenu
             }, {
+
                 label: window.languageJSON.menu.theme,
                 submenu: {
                     items: [{
                         label: window.languageJSON.menu.themeDay,
+                        icon: () => localStorage.UItheme === 'Day' && 'check',
                         click: () => {
                             this.switchTheme('Day');
                         }
                     }, {
                         label: window.languageJSON.menu.themeNight,
+                        icon: () => localStorage.UItheme === 'Night' && 'check',
                         click: () => {
                             this.switchTheme('Night');
                         }
                     }, {
                         label: window.languageJSON.menu.themeHorizon || 'Horizon',
+                        icon: () => localStorage.UItheme === 'Horizon' && 'check',
                         click: () => {
                             this.switchTheme('Horizon');
                         }
@@ -330,18 +329,21 @@ main-menu.flexcol
                 submenu: {
                     items: [{
                         label: window.languageJSON.menu.codeFontDefault,
+                        icon: () => !localStorage.fontFamily && 'check',
                         click: () => {
                             localStorage.fontFamily = '';
                             window.signals.trigger('codeFontUpdated');
                         }
                     }, {
                         label: window.languageJSON.menu.codeFontOldSchool,
+                        icon: () => localStorage.fontFamily === 'Monaco, Menlo, "Ubuntu Mono", Consolas, source-code-pro, monospace' && 'check',
                         click: () => {
                             localStorage.fontFamily = 'Monaco, Menlo, "Ubuntu Mono", Consolas, source-code-pro, monospace';
                             window.signals.trigger('codeFontUpdated');
                         }
                     }, {
                         label: window.languageJSON.menu.codeFontSystem,
+                        icon: () => localStorage.fontFamily === 'monospace' && 'check',
                         click: () => {
                             localStorage.fontFamily = 'monospace';
                             window.signals.trigger('codeFontUpdated');
@@ -384,17 +386,21 @@ main-menu.flexcol
             }, {
                 label: window.languageJSON.common.contribute,
                 click: function () {
-                    gui.Shell.openExternal('https://github.com/ct-js/ct-js');
+                    const {shell} = require('electron');
+                    shell.openExternal('https://github.com/ct-js/ct-js');
                 }
             }, {
                 label: window.languageJSON.common.donate,
+                icon: 'heart',
                 click: function () {
-                    gui.Shell.openExternal('https://www.patreon.com/comigo');
+                    const {shell} = require('electron');
+                    shell.openExternal('https://www.patreon.com/comigo');
                 }
             }, {
                 label: window.languageJSON.common.ctsite,
                 click: function () {
-                    gui.Shell.openExternal('https://ctjs.rocks/');
+                    const {shell} = require('electron');
+                    shell.openExternal('https://ctjs.rocks/');
                 }
             }, {
                 label: window.languageJSON.menu.license,
@@ -431,6 +437,7 @@ main-menu.flexcol
                 }
                 languageSubmenu.items.push({
                     label: file,
+                    icon: () => localStorage.appLanguage === file && 'check',
                     click: function() {
                         switchLanguage(file);
                     }
@@ -442,7 +449,8 @@ main-menu.flexcol
             languageSubmenu.items.push({
                 label: window.languageJSON.common.translateToYourLanguage,
                 click: function() {
-                    gui.Shell.openExternal('https://github.com/ct-js/ct-js/tree/develop/app/data/i18n');
+                    const {shell} = require('electron');
+                    shell.openExternal('https://github.com/ct-js/ct-js/tree/develop/app/data/i18n');
                 }
             });
         })

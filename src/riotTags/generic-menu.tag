@@ -1,9 +1,9 @@
 generic-menu(class="{opened: opts.menu.opened}" ref="root")
-    label(each="{item in opts.menu}" class="{item.type || 'item'} {checkbox: item.type === 'checkbox'}" disabled="{item.disabled}" onclick="{item.click}")
-        i(class="icon-{item.icon}" if="{item.icon && item.type !== 'separator' && item.type !== 'checkbox'}")
-        input(type="checkbox" checked="{item.checked}")
-        span(if="{!item.type === 'separator'}") {item.label}
-        generic-menu(if="{item.submenu && item.type !== 'separator'}")
+    label(each="{item in opts.menu.items}" class="{item.type || 'item'} {checkbox: item.type === 'checkbox'} {submenu: item.submenu}" disabled="{item.disabled}" onclick="{item.click}")
+        i(class="icon-{item.icon instanceof Function? item.icon() : item.icon}" if="{item.icon && item.type !== 'separator' && item.type !== 'checkbox'}")
+        input(type="checkbox" checked="{item.checked}" if="{item.type === 'checkbox'}")
+        span(if="{!item.type !== 'separator'}") {item.label}
+        generic-menu(if="{item.submenu && item.type !== 'separator'}" menu="{item.submenu}")
     script.
         this.onItemClick = e => {
             if (e.item.item.onclick) {
@@ -34,8 +34,10 @@ generic-menu(class="{opened: opts.menu.opened}" ref="root")
 
         }
         const clickListener = e => {
-            if (!e.target.closest(this.refs.root)) {
-                this.opened = false;
+            if (e.target.closest('generic-menu') !== this.refs.root && !e.item.item.submenu) {
+                e.target.closest('generic-menu').opened = false;
+            } else {
+                e.stopPropagation();
             }
         }
         this.on('mount', () => {

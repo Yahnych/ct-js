@@ -10,7 +10,8 @@ html
                     preview-bottom-panel
         script(src="./data/bundle.js")
         script.
-            var title = /\?title=([\s\S]+)/g.exec(location.search)[1] || 'ct.js Game';
+            var title = /\?title=([\s\S]+)&/g.exec(location.search)[1] || 'ct.js Game';
+            var port = /\&port=([\d]+)/g.exec(location.search)[1];
             document.title = title + ' — ct.js debugger';
             var game = document.getElementById('thePreview'),
                 devTools = document.getElementById('theDebugger');
@@ -18,6 +19,7 @@ html
                 game.showDevTools(true, devTools);
                 game.focus();
             });
+            game.src = `http://localhost:${port}/`;
             window.signals = {};
             riot.observable(window.signals);
             riot.mount('*');
