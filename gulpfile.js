@@ -21,7 +21,6 @@ const path = require('path'),
       streamQueue = require('streamqueue'),
       notifier = require('node-notifier'),
       fs = require('fs-extra'),
-      runElectron = require('gulp-run-electron'),
 
       spawnise = require('./node_requires/spawnise');
 
@@ -201,10 +200,9 @@ const lintJS = () => gulp.src(['./src/js/**/*.js', '!./src/js/3rdparty/**/*.js',
 const lint = gulp.series(lintJS, lintStylus);
 
 const launchApp = () => {
-    gulp.src('./app')
-    .pipe(runElectron([], {
+    spawnise.spawn(npm, ['run', 'start'], {
         cwd: './app'
-    }));
+    }).then(launchApp);
 };
 
 const docs = async () => {

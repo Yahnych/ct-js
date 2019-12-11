@@ -19,8 +19,7 @@ project-selector
                                 i.icon-x(onclick="{forgetProject}" title="{voc.forgetProject}")
                             span {project}
                     label.file.flexfix-footer.nmb
-                        input(type="file" ref="fileexternal" accept=".ict" onchange="{openProjectFind}")
-                        .button.wide.inline.nml.nmr
+                        button.wide.inline.nml.nmr(onclick="{openProjectFind}")
                             i.icon.icon-folder
                             span {voc.browse}
             #newProject.inset.flexrow.flexmiddle
@@ -34,15 +33,6 @@ project-selector
                         ref="projectname"
                     ).wide
                 .c3.npr.npt.npb
-                    input(
-                        type="file",
-                        ref="choosefolder",
-                        style="display:none",
-                        onchange="{chooseProjectFolder}"
-                        nwdirectory
-                        nwworkingdir="projects/ThisFolderWillHopefullyNeverExistButItWillGoInsideTheProjectsDir"
-                        nwdirectorydesc="{voc.newProject.selectProjectFolder}"
-                    )
                     button.nm.wide.inline(onclick="{openProjectFolder}") {voc.newProject.button}
     .aVersionNumber
         a(href="https://discord.gg/CggbPkb" title="{voc.discord}" onclick="{openExternal('https://discord.gg/CggbPkb')}")
@@ -182,7 +172,16 @@ project-selector
          * Handler for a manual search for a project folder, triggered by an input[type="file"]
          */
         this.chooseProjectFolder = e => {
-            this.newProject(e.target.value, this.refs.projectname.value);
+            const {dialog, BrowserWindow} = require('electron').remote;
+            const [path] = dialog.showOpenDialogSync(BrowserWindow.getFocusedWindow(), {
+                title: this.voc.newProject.selectProjectFolder,
+                defaultPath: 'projects/',
+                buttonLabel: this.voc.newProject.saveProjectHere,
+                properties: ['openDirectory']
+            }) || [];
+            if (path) {
+                this.newProject(path, this.refs.projectname.value);
+            }
         };
 
         this.openProjectFolder = e => {
@@ -191,15 +190,25 @@ project-selector
                 alertify.error(this.voc.newProject.nameerr);
                 return;
             }
-            this.refs.choosefolder.click();
+            this.chooseProjectFolder();
         };
 
         /**
          * Handler for a manual search for a project, triggered by an input[type="file"]
          */
         this.openProjectFind = e => {
-            var fe = this.refs.fileexternal,
-                proj = fe.value;
+            const {dialog, BrowserWindow} = require('electron').remote;
+            const [proj] = dialog.showOpenDialogSync(BrowserWindow.getFocusedWindow(), {
+                filters: [{
+                    name: 'Ct.js project',
+                    extensions: ['ict']
+                }],
+                defaultPath: 'projects/',
+                properties: ['openFile']
+            }) || [];
+            if (!proj) {
+                return;
+            }
             if (path.extname(proj).toLowerCase() === '.ict') {
                 window.loadProject(proj);
                 sessionStorage.projname = path.basename(proj);
@@ -207,7 +216,6 @@ project-selector
             } else {
                 alertify.error(languageJSON.common.wrongFormat);
             }
-            fe.value = '';
         };
 
         // Checking for updates

@@ -27,8 +27,7 @@ const createMainWindow = () => {
         dialog.showMessageBox(mainWindow, {
             type: 'question',
             title: 'Exit confirmation',
-            message: 'Do you really want to quit?',
-            details: 'All the unsaved changes will be lost!',
+            message: 'Do you really want to quit?\nAll the unsaved changes will be lost!',
             buttons: ['Yes', 'No'],
             defaultId: 1
         }).then(res => {

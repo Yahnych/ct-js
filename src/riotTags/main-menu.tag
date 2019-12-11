@@ -7,6 +7,7 @@ main-menu.flexcol
         ul#app.nav.tabs
             li.it30#ctlogo(onclick="{ctClick}" title="{voc.ctIDE}")
                 i.icon-menu
+                generic-menu(menu="{catMenu}")
             li.it30(onclick="{changeTab('patrons')}" title="{voc.patrons}" class="{active: tab === 'patrons'}")
                 i.icon-heart
             li.it30(onclick="{saveProject}" title="{voc.save} (Control+S)" data-hotkey="Control+s")
@@ -71,8 +72,6 @@ main-menu.flexcol
             window.signals.trigger('globalTabChanged');
             window.signals.trigger(`${tab}Focus`);
         };
-        const gui = require('nw.gui'),
-              win = gui.Window.get();
 
         this.fullscreen = false;
         this.toggleFullscreen = function() {
@@ -80,10 +79,14 @@ main-menu.flexcol
             this.fullscreen = !this.fullscreen;
         };
 
+        const languageSubmenu = {
+            items: []
+        };
+        const recentProjectsSubmenu = {
+            items: []
+        };
         this.refreshLatestProject = function() {
-            while (recentProjectsSubmenu.items.length) {
-                recentProjectsSubmenu.removeAt(0);
-            }
+            recentProjectsSubmenu.items.length = 0;
             var lastProjects;
             if (('lastProjects' in localStorage) &&
                 (localStorage.lastProjects !== '')) {
@@ -92,7 +95,7 @@ main-menu.flexcol
                 lastProjects = [];
             }
             for (const project of lastProjects) {
-                recentProjectsSubmenu.append(new gui.MenuItem({
+                recentProjectsSubmenu.items.push({
                     label: project,
                     click: function () {
                         if (!confirm(window.languageJSON.common.reallyexit)) {
@@ -101,12 +104,12 @@ main-menu.flexcol
                         window.signals.trigger('resetAll');
                         window.loadProject(project);
                     }
-                }))
+                });
             }
         };
         this.ctClick = (e) => {
             this.refreshLatestProject();
-            catMenu.popup(e.clientX, e.clientY);
+            catMenu.opened = true;
         };
         this.saveProject = () => {
             return fs.outputJSON(sessionStorage.projdir + '.ict', currentProject, {
@@ -195,7 +198,8 @@ main-menu.flexcol
             runCtExport(currentProject, sessionStorage.projdir)
             .then(path => {
                 console.log(path);
-                nw.Shell.openExternal(`http://localhost:${server.address().port}/`);
+                const shell = require('electron').shell;
+                shell.openExternal(`http://localhost:${server.address().port}/`);
             });
         };
         hotkey.on('Alt+F5', this.runProjectAlt);
@@ -219,7 +223,8 @@ main-menu.flexcol
                     output = fs.createWriteStream(outName);
 
                 output.on('close', () => {
-                    nw.Shell.showItemInFolder(outName);
+                    const shell = require('electron').shell;
+                    shell.showItemInFolder(outName);
                     alertify.success(this.voc.successZipProject.replace('{0}', outName));
                     fs.remove(inDir);
                 });
@@ -242,7 +247,8 @@ main-menu.flexcol
                     output = fs.createWriteStream(exportFile);
 
                 output.on('close', () => {
-                    nw.Shell.showItemInFolder(exportFile);
+                    const shell = require('electron').shell;
+                    shell.showItemInFolder(exportFile);
                     alertify.success(this.voc.successZipExport.replace('{0}', exportFile));
                 });
 
@@ -252,193 +258,152 @@ main-menu.flexcol
             })
             .catch(alertify.error);
         };
-
-        var catMenu = new gui.Menu();
-        catMenu.append(new gui.MenuItem({
-            label: window.languageJSON.common.save,
-            click: this.saveProject
-        }));
-        catMenu.append(new gui.MenuItem({
-            label: this.voc.openIncludeFolder,
-            click: e => {
-                nw.Shell.openItem(path.join(sessionStorage.projdir, '/include'));
-            }
-        }))
-        catMenu.append(new gui.MenuItem({
-            label: this.voc.zipProject,
-            click: this.zipProject
-        }));
-        catMenu.append(new gui.MenuItem({
-            label: this.voc.zipExport,
-            click: this.zipExport
-        }));
-        catMenu.append(new gui.MenuItem({
-            label: this.voc.exportDesktop,
-            click: e => {
-                this.showExporter = true;
-                this.update();
-            }
-        }));
-        catMenu.append(new gui.MenuItem({
-            type: 'separator'
-        }));
-        catMenu.append(new gui.MenuItem({
-            label: window.languageJSON.menu.startScreen,
-            click: (e) => {
-                if (!confirm(window.languageJSON.common.reallyexit)) {
-                    return false;
-                }
-                window.signals.trigger('resetAll');
-            }
-        }));
-        var recentProjectsSubmenu = new nw.Menu();
-        catMenu.append(new gui.MenuItem({
-            label: window.languageJSON.intro.latest,
-            submenu: recentProjectsSubmenu
-        }));
-
-        catMenu.append(new gui.MenuItem({type: 'separator'}));
-
-        var languageSubmenu = new nw.Menu();
-        catMenu.append(new gui.MenuItem({
-            label: window.languageJSON.common.language,
-            submenu: languageSubmenu
-        }));
-
-        var themeSubmenu = new nw.Menu();
-        themeSubmenu.append(new gui.MenuItem({
-            label: window.languageJSON.menu.themeDay,
-            click: () => {
-                this.switchTheme('Day');
-            }
-        }));
-        themeSubmenu.append(new gui.MenuItem({
-            label: window.languageJSON.menu.themeNight,
-            click: () => {
-                this.switchTheme('Night');
-            }
-        }));
-        themeSubmenu.append(new gui.MenuItem({
-            label: window.languageJSON.menu.themeHorizon || 'Horizon',
-            click: () => {
-                this.switchTheme('Horizon');
-            }
-        }));
-        catMenu.append(new gui.MenuItem({
-            label: window.languageJSON.menu.theme,
-            submenu: themeSubmenu
-        }));
+        localStorage.UItheme = localStorage.UItheme || 'Day';
         this.switchTheme = theme => {
             localStorage.UItheme = theme;
             document.getElementById('themeCSS').href = `./data/theme${theme}.css`;
             window.signals.trigger('UIThemeChanged', theme);
         };
-        localStorage.UItheme = localStorage.UItheme || 'Day';
 
-        var fontSubmenu = new nw.Menu();
-        fontSubmenu.append(new gui.MenuItem({
-            label: window.languageJSON.menu.codeFontDefault,
-            click: () => {
-                localStorage.fontFamily = '';
-                window.signals.trigger('codeFontUpdated');
-            }
-        }));
-        fontSubmenu.append(new gui.MenuItem({
-            label: window.languageJSON.menu.codeFontOldSchool,
-            click: () => {
-                localStorage.fontFamily = 'Monaco, Menlo, "Ubuntu Mono", Consolas, source-code-pro, monospace';
-                window.signals.trigger('codeFontUpdated');
-            }
-        }));
-        fontSubmenu.append(new gui.MenuItem({
-            label: window.languageJSON.menu.codeFontSystem,
-            click: () => {
-                localStorage.fontFamily = 'monospace';
-                window.signals.trigger('codeFontUpdated');
-            }
-        }));
-        fontSubmenu.append(new gui.MenuItem({
-            label: window.languageJSON.menu.codeFontCustom,
-            click: () => {
-                alertify
-                .defaultValue(localStorage.fontFamily || '')
-                .prompt(window.languageJSON.menu.newFont)
-                .then(e => {
-                    if (e.inputValue && e.buttonClicked !== 'cancel') {
-                        localStorage.fontFamily = `"${e.inputValue}", monospace`;
+        this.catMenu = {
+            items: [{
+                label: window.languageJSON.common.save,
+                click: this.saveProject
+            }, {
+                label: this.voc.openIncludeFolder,
+                click: e => {
+                    const shell = require('electron').shell;
+                    shell.openItem(path.join(sessionStorage.projdir, '/include'));
+                }
+            }, {
+                label: this.voc.zipProject,
+                click: this.zipProject
+            }, {
+                label: this.voc.zipExport,
+                click: this.zipExport
+            }, {
+                label: this.voc.exportDesktop,
+                click: e => {
+                    this.showExporter = true;
+                    this.update();
+                }
+            }, {
+                type: 'separator'
+            }, {
+                label: window.languageJSON.menu.startScreen,
+                click: (e) => {
+                    if (!confirm(window.languageJSON.common.reallyexit)) {
+                        return false;
                     }
-                    window.signals.trigger('codeFontUpdated');
-                });
-            }
-        }));
-        fontSubmenu.append(new gui.MenuItem({type: 'separator'}));
-        fontSubmenu.append(new gui.MenuItem({
-            label: window.languageJSON.menu.codeLigatures,
-            type: 'checkbox',
-            checked: localStorage.codeLigatures !== 'off',
-            click: () => {
-                localStorage.codeLigatures = localStorage.codeLigatures === 'off'? 'on' : 'off';
-                window.signals.trigger('codeFontUpdated');
-            }
-        }));
-        fontSubmenu.append(new gui.MenuItem({
-            label: window.languageJSON.menu.codeDense,
-            type: 'checkbox',
-            checked: localStorage.codeDense === 'on',
-            click: () => {
-                localStorage.codeDense = localStorage.codeDense === 'off'? 'on' : 'off';
-                window.signals.trigger('codeFontUpdated');
-            }
-        }));
-
-        catMenu.append(new gui.MenuItem({
-            label: window.languageJSON.menu.codeFont,
-            submenu: fontSubmenu
-        }));
-
-        catMenu.append(new gui.MenuItem({type: 'separator'}));
-
-        catMenu.append(new gui.MenuItem({
-            label: window.languageJSON.common.contribute,
-            click: function () {
-                gui.Shell.openExternal('https://github.com/ct-js/ct-js');
-            }
-        }));
-        catMenu.append(new gui.MenuItem({
-            label: window.languageJSON.common.ctsite,
-            click: function () {
-                gui.Shell.openExternal('https://ctjs.rocks/');
-            }
-        }));
-        catMenu.append(new gui.MenuItem({
-            label: window.languageJSON.menu.license,
-            click: () => {
-                this.showLicense = true;
-                this.update();
-            }
-        }));
-
-        catMenu.append(new gui.MenuItem({
-            label: window.languageJSON.common.donate,
-            click: function () {
-                gui.Shell.openExternal('https://www.patreon.com/comigo');
-            }
-        }));
-
-        catMenu.append(new gui.MenuItem({type: 'separator'}));
-        catMenu.append(new gui.MenuItem({
-            label: window.languageJSON.common.exit,
-            click: function (e) {
-                alertify
-                .confirm(window.languageJSON.common.exitconfirm)
-                .then(e => {
-                    if (e.buttonClicked === 'ok') {
-                        gui.App.quit();
-                    }
-                });
-            }
-        }));
-
+                    window.signals.trigger('resetAll');
+                }
+            }, {
+                label: window.languageJSON.intro.latest,
+                submenu: recentProjectsSubmenu
+            }, {
+                type: 'separator'
+            }, {
+                label: window.languageJSON.common.language,
+                submenu: languageSubmenu
+            }, {
+                label: window.languageJSON.menu.theme,
+                submenu: {
+                    items: [{
+                        label: window.languageJSON.menu.themeDay,
+                        click: () => {
+                            this.switchTheme('Day');
+                        }
+                    }, {
+                        label: window.languageJSON.menu.themeNight,
+                        click: () => {
+                            this.switchTheme('Night');
+                        }
+                    }, {
+                        label: window.languageJSON.menu.themeHorizon || 'Horizon',
+                        click: () => {
+                            this.switchTheme('Horizon');
+                        }
+                    }]
+                }
+            }, {
+                label: window.languageJSON.menu.codeFont,
+                submenu: {
+                    items: [{
+                        label: window.languageJSON.menu.codeFontDefault,
+                        click: () => {
+                            localStorage.fontFamily = '';
+                            window.signals.trigger('codeFontUpdated');
+                        }
+                    }, {
+                        label: window.languageJSON.menu.codeFontOldSchool,
+                        click: () => {
+                            localStorage.fontFamily = 'Monaco, Menlo, "Ubuntu Mono", Consolas, source-code-pro, monospace';
+                            window.signals.trigger('codeFontUpdated');
+                        }
+                    }, {
+                        label: window.languageJSON.menu.codeFontSystem,
+                        click: () => {
+                            localStorage.fontFamily = 'monospace';
+                            window.signals.trigger('codeFontUpdated');
+                        }
+                    }, {
+                        label: window.languageJSON.menu.codeFontCustom,
+                        click: () => {
+                            alertify
+                            .defaultValue(localStorage.fontFamily || '')
+                            .prompt(window.languageJSON.menu.newFont)
+                            .then(e => {
+                                if (e.inputValue && e.buttonClicked !== 'cancel') {
+                                    localStorage.fontFamily = `"${e.inputValue}", monospace`;
+                                }
+                                window.signals.trigger('codeFontUpdated');
+                            });
+                        }
+                    }, {
+                        type: 'separator'
+                    }, {
+                        label: window.languageJSON.menu.codeLigatures,
+                        type: 'checkbox',
+                        checked: localStorage.codeLigatures !== 'off',
+                        click: () => {
+                            localStorage.codeLigatures = localStorage.codeLigatures === 'off'? 'on' : 'off';
+                            window.signals.trigger('codeFontUpdated');
+                        }
+                    }, {
+                        label: window.languageJSON.menu.codeDense,
+                        type: 'checkbox',
+                        checked: localStorage.codeDense === 'on',
+                        click: () => {
+                            localStorage.codeDense = localStorage.codeDense === 'off'? 'on' : 'off';
+                            window.signals.trigger('codeFontUpdated');
+                        }
+                    }]
+                }
+            }, {
+                type: 'separator'
+            }, {
+                label: window.languageJSON.common.contribute,
+                click: function () {
+                    gui.Shell.openExternal('https://github.com/ct-js/ct-js');
+                }
+            }, {
+                label: window.languageJSON.common.donate,
+                click: function () {
+                    gui.Shell.openExternal('https://www.patreon.com/comigo');
+                }
+            }, {
+                label: window.languageJSON.common.ctsite,
+                click: function () {
+                    gui.Shell.openExternal('https://ctjs.rocks/');
+                }
+            }, {
+                label: window.languageJSON.menu.license,
+                click: () => {
+                    this.showLicense = true;
+                    this.update();
+                }
+            }]
+        };
         this.switchLanguage = filename => {
             const i18n = require('./data/node_requires/i18n.js');
             const {extend} = require('./data/node_requires/objectUtils');
@@ -464,22 +429,22 @@ main-menu.flexcol
                 if (file === 'Comments') {
                     return;
                 }
-                languageSubmenu.append(new nw.MenuItem({
+                languageSubmenu.items.push({
                     label: file,
                     click: function() {
                         switchLanguage(file);
                     }
-                }));
+                });
             });
-            languageSubmenu.append(new nw.MenuItem({
+            languageSubmenu.items.push({
                 type: 'separator'
-            }));
-            languageSubmenu.append(new nw.MenuItem({
+            });
+            languageSubmenu.items.push({
                 label: window.languageJSON.common.translateToYourLanguage,
                 click: function() {
                     gui.Shell.openExternal('https://github.com/ct-js/ct-js/tree/develop/app/data/i18n');
                 }
-            }));
+            });
         })
         .catch(e => {
             alert('Could not get i18n files: ' + e);

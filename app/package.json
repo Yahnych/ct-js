@@ -14,6 +14,9 @@
     "type": "git",
     "url": "https://github.com/ct-js/ct-js.git"
   },
+  "scripts": {
+    "start": "electron ."
+  },
   "maintainers": [
     {
       "name": "Cosmo Myzrail Gorynych",
@@ -52,5 +55,8 @@
     "pixi.js-legacy": "5.1.2",
     "ttf2woff": "^2.0.1",
     "unzipper": "^0.10.5"
+  },
+  "devDependencies": {
+    "electron": "^7.1.4"
   }
 }
