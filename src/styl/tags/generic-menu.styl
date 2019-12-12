@@ -12,6 +12,7 @@ generic-menu
     text-align left
     transform translate(0, 0.5rem)
     {transshort}
+    transition-property visibility, opacity, transform
     &.opened, & label:hover &
         opacity 1
         visibility visible
@@ -25,6 +26,12 @@ generic-menu
         left 100%
         top 0
     label, generic-menu label
+        &:first-child
+            border-top-left-radius br
+            border-top-right-radius br
+        &:last-child
+            border-bottom-left-radius br
+            border-bottom-right-radius br
         color text
         {trans}
         i
@@ -35,15 +42,14 @@ generic-menu
             &::before
                 font-size 1.125rem
         &:hover, &:focus
-            color act
-            {transshort}
-            & > i
-                color accent1
-        &:active
             color white
             background-color act
             & > i
                 color white
+            {transshort}
+        &:active
+            background-color accent1
+            {transshort}
         &.submenu::after
             @extends .icon-chevron-right:before
             font-family icomoon
