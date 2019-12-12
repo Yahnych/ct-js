@@ -22,7 +22,7 @@ sounds-panel.panel.view
                 onlong-press="{popupMenu(sound)}"
             )
                 span {sound.name}
-                img(src="/data/img/{sound.isMusic? 'music' : 'wave'}.png")
+                img(src="data/img/{sound.isMusic? 'music' : 'wave'}.png")
     sound-editor(if="{editing}" sound="{editedSound}")
     generic-menu(menu="{soundMenu}" ref="soundMenu")
     script.
@@ -130,6 +130,7 @@ sounds-panel.panel.view
                     .then(e => {
                         if (e.inputValue && e.buttonClicked !== 'cancel') {
                             this.editedSound.name = e.inputValue;
+                            this.update();
                         }
                     });
                 }
