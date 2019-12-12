@@ -27,12 +27,23 @@ generic-menu
     label, generic-menu label
         color text
         {trans}
+        i
+            position absolute
+            left 0.8rem
+            top 0.35rem
+            color act
+            &::before
+                font-size 1.125rem
         &:hover, &:focus
             color act
             {transshort}
+            & > i
+                color accent1
         &:active
             color white
             background-color act
+            & > i
+                color white
         &.submenu::after
             @extends .icon-chevron-right:before
             font-family icomoon
@@ -55,10 +66,3 @@ generic-menu
         margin 0.5rem 0
         border-top 1px solid bd
         cursor initial
-    label > i
-        position absolute
-        left 0.8rem
-        top 0.35rem
-        color act
-        &::before
-            font-size 1.125rem
