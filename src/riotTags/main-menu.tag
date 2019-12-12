@@ -7,7 +7,7 @@ main-menu.flexcol
         ul#app.nav.tabs
             li.it30#ctlogo(onclick="{ctClick}" title="{voc.ctIDE}")
                 i.icon-menu
-                generic-menu(menu="{catMenu}")
+                generic-menu(menu="{catMenu}" ref="catMenu")
             li.it30(onclick="{changeTab('patrons')}" title="{voc.patrons}" class="{active: tab === 'patrons'}")
                 i.icon-heart
             li.it30(onclick="{saveProject}" title="{voc.save} (Control+S)" data-hotkey="Control+s")
@@ -109,7 +109,7 @@ main-menu.flexcol
         };
         this.ctClick = (e) => {
             this.refreshLatestProject();
-            this.catMenu.opened = !this.catMenu.opened;
+            this.refs.catMenu.toggle();
         };
         this.saveProject = () => {
             return fs.outputJSON(sessionStorage.projdir + '.ict', currentProject, {
