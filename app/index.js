@@ -1,5 +1,8 @@
 /* eslint-disable camelcase */
 const {app, dialog, BrowserWindow} = require('electron');
+
+app.commandLine.appendSwitch('remote-debugging-port', '18364');
+
 let mainWindow;
 const createMainWindow = () => {
     mainWindow = new BrowserWindow({
@@ -16,9 +19,12 @@ const createMainWindow = () => {
         webPreferences: {
             nodeIntegration: true,
             defaultFontFamily: 'sansSerif',
-            backgroundThrottling: true
+            backgroundThrottling: true,
+            webviewTag: true,
+            webSecurity: false
         }
     });
+    mainWindow.removeMenu();
     mainWindow.loadFile('index.html');
     mainWindow.webContents.openDevTools();
 

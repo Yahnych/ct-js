@@ -76,7 +76,8 @@ main-menu.flexcol
         this.fullscreen = false;
         this.toggleFullscreen = function() {
             this.fullscreen = !this.fullscreen;
-            electron.remote.getCurrentWindow().setFullScreen(this.fullscreen);
+            const {remote} = require('electron');
+            remote.getCurrentWindow().setFullScreen(this.fullscreen);
         };
 
         const languageSubmenu = {
@@ -170,7 +171,7 @@ main-menu.flexcol
                 previewWindow = window.open(
                     `preview.html?title=${encodeURIComponent(currentProject.settings.title || 'ct.js game')}&port=${server.address().port}`,
                     'ctPreview',
-                    'nodeIntegration=yes,nodeIntegrationInSubFrames=yes,webviewTag=yes'
+                    'nodeIntegration=yes,nodeIntegrationInSubFrames=yes,webviewTag=yes,webSecurity=yes'
                 );
                 previewWindow.focus();
             })
