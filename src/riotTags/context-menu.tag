@@ -1,9 +1,9 @@
-generic-menu(class="{opened: opts.menu.opened}" ref="root")
+context-menu(class="{opened: opts.menu.opened}" ref="root")
     label(each="{item in opts.menu.items}" class="{item.type || 'item'} {checkbox: item.type === 'checkbox'} {submenu: item.submenu}" disabled="{item.disabled}" onclick="{onItemClick}")
         i(class="icon-{item.icon instanceof Function? item.icon() : item.icon}" if="{item.icon && item.type !== 'separator' && item.type !== 'checkbox'}")
         input(type="checkbox" checked="{item.checked}" if="{item.type === 'checkbox'}")
         span(if="{!item.type !== 'separator'}") {item.label}
-        generic-menu(if="{item.submenu && item.type !== 'separator'}" menu="{item.submenu}")
+        context-menu(if="{item.submenu && item.type !== 'separator'}" menu="{item.submenu}")
     script.
         var noFakeClicks;
         this.onItemClick = e => {
@@ -12,7 +12,7 @@ generic-menu(class="{opened: opts.menu.opened}" ref="root")
             }
             if (!e.item.item.submenu) { // autoclose on regular items
                 this.opts.menu.opened = false;
-            } else if (e.target.closest('generic-menu') === this.root) { // prevent closing if a label with a submenu was clicked *directly*
+            } else if (e.target.closest('context-menu') === this.root) { // prevent closing if a label with a submenu was clicked *directly*
                 e.stopPropagation();
             }
         };
@@ -55,7 +55,7 @@ generic-menu(class="{opened: opts.menu.opened}" ref="root")
             if (!this.opts.menu.opened || noFakeClicks) {
                 return;
             }
-            if (e.target.closest('generic-menu') !== this.root) {
+            if (e.target.closest('context-menu') !== this.root) {
                 this.opts.menu.opened = false;
                 this.update();
             } else {

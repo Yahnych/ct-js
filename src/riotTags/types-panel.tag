@@ -24,7 +24,7 @@ types-panel.panel.view
                 span {type.name}
                 img(src="{type.texture !== -1 ? (glob.texturemap[type.texture].src.split('?')[0] + '_prev.png?' + getTypeTextureRevision(type)) : '/data/img/notexture.png'}")
     type-editor(if="{editingType}" type="{editedType}")
-    generic-menu(menu="{typeMenu}" ref="typeMenu")
+    context-menu(menu="{typeMenu}" ref="typeMenu")
     script.
         this.namespace = 'types';
         this.mixin(window.riotVoc);

@@ -7,7 +7,7 @@ main-menu.flexcol
         ul#app.nav.tabs
             li.it30#ctlogo(onclick="{ctClick}" title="{voc.ctIDE}")
                 i.icon-menu
-                generic-menu(menu="{catMenu}" ref="catMenu")
+                context-menu#theCatMenu(menu="{catMenu}" ref="catMenu")
             li.it30(onclick="{changeTab('patrons')}" title="{voc.patrons}" class="{active: tab === 'patrons'}")
                 i.icon-heart
             li.it30(onclick="{saveProject}" title="{voc.save} (Control+S)" data-hotkey="Control+s")
@@ -75,8 +75,8 @@ main-menu.flexcol
 
         this.fullscreen = false;
         this.toggleFullscreen = function() {
-            win.toggleFullscreen();
             this.fullscreen = !this.fullscreen;
+            electron.remote.getCurrentWindow().setFullScreen(this.fullscreen);
         };
 
         const languageSubmenu = {
@@ -161,7 +161,7 @@ main-menu.flexcol
         this.runProject = e => {
             runCtExport(currentProject, sessionStorage.projdir)
             .then(path => {
-                if (!previewWindow.closed) {
+                if (previewWindow && !previewWindow.closed) {
                     previewWindow.show();
                     previewWindow.focus();
                     previewWindow.document.getElementById('thePreview').reload();
@@ -172,16 +172,7 @@ main-menu.flexcol
                     'ctPreview',
                     'nodeIntegration=yes,nodeIntegrationInSubFrames=yes,webviewTag=yes'
                 );
-                var wind = previewWindow.window;
-                previewWindow = wind;
-                previewWindow.once('loaded', e => {
-                    previewWindow.title = 'ct.IDE Debugger';
-                    const win = previewWindow.window;
-                    previewWindow.leaveFullscreen();
-                    previewWindow.maximize();
-                    var game = win.document.getElementById('thePreview');
-                    game.src = `http://localhost:${server.address().port}/`;
-                });
+                previewWindow.focus();
             })
             .catch(e => {
                 window.alertify.error(e);

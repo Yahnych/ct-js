@@ -24,7 +24,7 @@ styles-panel.flexfix.tall.fifty
             .aStyleIcon
                 img(src="file://{window.sessionStorage.projdir + '/img/' + style.origname}_prev.png?{style.lastmod}")
     style-editor(if="{editingStyle}" styleobj="{editedStyle}")
-    generic-menu(menu="{styleMenu}" ref="styleMenu")
+    context-menu(menu="{styleMenu}" ref="styleMenu")
     script.
         const generateGUID = require('./data/node_requires/generateGUID');
 

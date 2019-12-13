@@ -25,7 +25,7 @@ rooms-panel.panel.view
                 img(src="file://{sessionStorage.projdir + '/img/r' + room.thumbnail + '.png?' + room.lastmod}")
                 span {room.name}
     room-editor(if="{editing}" room="{editingRoom}")
-    generic-menu(menu="{roomMenu}" ref="roomMenu")
+    context-menu(menu="{roomMenu}" ref="roomMenu")
     script.
         const generateGUID = require('./data/node_requires/generateGUID');
 

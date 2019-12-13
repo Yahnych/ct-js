@@ -24,7 +24,7 @@ sounds-panel.panel.view
                 span {sound.name}
                 img(src="data/img/{sound.isMusic? 'music' : 'wave'}.png")
     sound-editor(if="{editing}" sound="{editedSound}")
-    generic-menu(menu="{soundMenu}" ref="soundMenu")
+    context-menu(menu="{soundMenu}" ref="soundMenu")
     script.
         this.namespace = 'sounds';
         this.mixin(window.riotVoc);

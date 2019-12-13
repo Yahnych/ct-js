@@ -62,7 +62,7 @@ textures-panel.panel.view
                 onchange="{textureImport}")
 
     texture-editor(if="{editing}" texture="{currentTexture}")
-    generic-menu(menu="{textureMenu}" ref="textureMenu")
+    context-menu(menu="{textureMenu}" ref="textureMenu")
     script.
         const fs = require('fs-extra'),
               path = require('path');

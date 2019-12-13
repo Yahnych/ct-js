@@ -24,7 +24,7 @@ fonts-panel.flexfix.tall.fifty
             input(type="file" multiple
                 accept=".ttf"
                 onchange="{fontImport}")
-    generic-menu(menu="{fontMenu}" ref="fontMenu")
+    context-menu(menu="{fontMenu}" ref="fontMenu")
     font-editor(if="{editingFont}" fontobj="{editedFont}")
     script.
         this.editingFont = false;

@@ -1,5 +1,7 @@
-generic-menu
+context-menu
     position absolute
+    top 0
+    left 0
     opacity 0
     visibility hidden
     {shad}
@@ -17,15 +19,15 @@ generic-menu
         opacity 1
         visibility visible
         transform translate(0, 0)
-    generic-menu
+    context-menu
         transition 0.35s 0.25s ease all
         transform translate(-0.5rem, 0)
-        &.opened, generic-menu label:hover generic-menu
+        &.opened, context-menu label:hover context-menu
             transition 0.15s 0.15s ease all
-    label generic-menu
+    label context-menu
         left 100%
         top 0
-    label, generic-menu label
+    label, context-menu label
         &:first-child
             border-top-left-radius br
             border-top-right-radius br
