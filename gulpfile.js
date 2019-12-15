@@ -29,9 +29,9 @@ const npm = (/^win/).test(process.platform) ? 'npm.cmd' : 'npm';
 
 const pack = require('./app/package.json');
 
-const electronVersion = '7.1.2',
-      platforms = ['osx64', 'win32', 'win64', 'linux32', 'linux64'],
-      appFiles = ['./app/**', '!./app/export/**', '!./app/projects/**', '!./app/exportDesktop/**', '!./app/cache/**', '!./app/.vscode/**', '!./app/JamGames/**'];
+const electronVersion = pack.devDependencies.electron;
+const platforms = ['osx64', 'win32', 'win64', 'linux32', 'linux64'];
+const appFiles = ['./app/**', '!./app/export/**', '!./app/projects/**', '!./app/exportDesktop/**', '!./app/cache/**', '!./app/.vscode/**', '!./app/JamGames/**'];
 
 var channelPostfix = argv.channel || false;
 
