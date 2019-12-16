@@ -26,7 +26,6 @@ const createMainWindow = () => {
     });
     mainWindow.removeMenu();
     mainWindow.loadFile('index.html');
-    mainWindow.webContents.openDevTools();
 
     mainWindow.on('close', e => {
         e.preventDefault();
