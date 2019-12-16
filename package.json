@@ -20,9 +20,7 @@
   "license": "MIT",
   "dependencies": {
     "electron-builder": "^21.2.0",
-    "filemode": "^3.0.0",
     "fs-extra": "4.0.2",
-    "globby": "^10.0.1",
     "gulp": "^4.0.2",
     "gulp-append-prepend": "^1.0.4",
     "gulp-chmod": "^3.0.0",
@@ -35,7 +33,6 @@
     "gulp-sourcemaps": "^2.6.4",
     "gulp-stylint": "^4.0.2",
     "gulp-stylus": "^2.7.0",
-    "gulp-zip": "^5.0.0",
     "jsdoc-x": "^4.0.3",
     "minimist": "^1.2.0",
     "node-notifier": "^5.2.1",

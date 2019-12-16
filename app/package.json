@@ -4,8 +4,12 @@
   "description": "ct.js — a free 2D game engine",
   "version": "1.2.1",
   "homepage": "https://ctjs.rocks/",
+  "author": {
+    "name": "Cosmo Myzrail Gorynych",
+    "email": "cosmomyzrailgorynych@gmail.com",
+    "url": "https://github.com/cosmomyzrailgorynych"
+  },
   "license": "MIT",
-  "user-agent": "ct.js game engine %name/%ver (%osinfo) NW.js/%nwver AppleWebkit/%webkit_ver Chromium/%chromium_ver",
   "window": {
     "toolbar": true,
     "frame": true
@@ -48,5 +52,74 @@
   },
   "devDependencies": {
     "electron": "7.1.5"
+  },
+  "build": {
+    "appId": "rocks.ctjs.ide",
+    "directories": {
+      "output": "./../build",
+      "buildResources": "./../buildAssets"
+    },
+    "extraFiles": [
+      "Changelog.md",
+      {
+        "from": "./data/i18n",
+        "to": "./data/i18n"
+      },
+      {
+        "from": "./data/ct.libs",
+        "to": "./data/ct.libs"
+      },
+      {
+        "from": "./data/ct.release",
+        "to": "./data/ct.release"
+      },
+      "examples"
+    ],
+    "files": [
+      "**/*",
+      "!/cache",
+      "!/Changelog.md",
+      "!/data/i18n",
+      "!/data/ct.libs",
+      "!/data/ct.release",
+      "!../src/examples",
+      "!/dist",
+      "!**/node_modules/*/{CHANGELOG.md,README.md,README,readme.md,readme}",
+      "!**/node_modules/*/{test,__tests__,tests,powered-test,example,examples}",
+      "!**/node_modules/*.d.ts",
+      "!**/node_modules/.bin",
+      "!**/*.{iml,o,hprof,orig,pyc,pyo,rbc,swp,csproj,sln,xproj}",
+      "!.editorconfig",
+      "!**/._*",
+      "!**/{.DS_Store,.git,.hg,.svn,CVS,RCS,SCCS,.gitignore,.gitattributes}",
+      "!**/{__pycache__,thumbs.db,.flowconfig,.idea,.vs,.nyc_output}",
+      "!**/{appveyor.yml,.travis.yml,circle.yml}",
+      "!**/{npm-debug.log,yarn.lock,.yarn-integrity,.yarn-metadata.json}"
+    ],
+    "linux": {
+      "target": [
+        "AppImage",
+        "zip"
+      ],
+      "category": "Development",
+      "maintainer": "Cosmo Myzrail Gorynych"
+    },
+    "win": {
+      "target": [
+        "nsis",
+        "portable",
+        "zip"
+      ],
+      "icon": "ct.ide.ico"
+    },
+    "mac": {
+      "target": ["zip", "dir"],
+      "category": "public.app-category.developer-tools",
+      "icon": "./ct.ide.icns"
+    },
+    "dmg": {
+      "backgroundColor": "#446adb",
+      "background": "dmgBg.png"
+    }
   }
 }

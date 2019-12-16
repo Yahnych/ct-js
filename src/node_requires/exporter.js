@@ -151,7 +151,7 @@ const packImages = async () => {
         const atlasJSON = {
             meta: {
                 app: 'https://ctjs.rocks/',
-                version: require(path.join(process.cwd(), 'package.json')).version,
+                version: require(path.join(process.cwd(), '__dirname')).version,
                 image: `a${binInd}.png`,
                 format: 'RGBA8888',
                 size: {
@@ -559,7 +559,7 @@ const runCtProject = async (project, projdir) => {
         .replace(/\/\*@pixelatedrender@\*\//g, Boolean(currentProject.settings.pixelatedrender))
         .replace(/\/\*@maxfps@\*\//g, Number(currentProject.settings.maxFPS))
         .replace(/\/\*@libs@\*\//g, `JSON.parse('${JSON.stringify(ctlibs)}')`)
-        .replace(/\/\*@ctversion@\*\//g, require(path.join(process.cwd(), 'package.json')).version)
+        .replace(/\/\*@ctversion@\*\//g, require(path.join(process.cwd(), '__dirname')).version)
         .replace(/\/\*@projectmeta@\*\//g, JSON.stringify({
             name: currentProject.settings.title,
             author: currentProject.settings.author,

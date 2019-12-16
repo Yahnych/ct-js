@@ -80,7 +80,7 @@ export-panel
                 .then(dir => writable = dir)
                 .then(() => fs.copy('./data/ct.release/desktopPack/', `${writable}/export/`))
                 .then(() => {
-                    const json = fs.readJSONSync('./data/ct.release/desktopPack/package.json');
+                    const json = fs.readJSONSync('./data/ct.release/desktopPack/__dirname');
                     json.version = version;
                     if (currentProject.settings.title) {
                         json.name = currentProject.settings.title;
@@ -89,7 +89,7 @@ export-panel
                     const startingRoom = currentProject.rooms.find(room => room.uid === currentProject.startroom) || currentProject.rooms[0];
                     json.window.width = startingRoom.width;
                     json.window.height = startingRoom.height;
-                    return fs.outputJSON(`${writable}/export/package.json`, json);
+                    return fs.outputJSON(`${writable}/export/__dirname`, json);
                 })
                 .then(() => {
                     const NwBuilder = require('nw-builder');

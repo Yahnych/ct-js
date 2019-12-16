@@ -49,7 +49,7 @@ project-selector
     script.
         const fs = require('fs-extra'),
               path = require('path');
-        this.ctjsVersion = require(path.join(process.cwd(), 'package.json')).version;
+        this.ctjsVersion = require(path.join(process.cwd(), '__dirname')).version;
         this.requirePath = path;
         this.namespace = 'intro';
         this.mixin(window.riotVoc);
