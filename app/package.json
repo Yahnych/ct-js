@@ -113,7 +113,10 @@
       "icon": "ct.ide.ico"
     },
     "mac": {
-      "target": ["zip", "dir"],
+      "target": [
+        "zip",
+        "dir"
+      ],
       "category": "public.app-category.developer-tools",
       "icon": "./ct.ide.icns"
     },
