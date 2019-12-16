@@ -1,5 +1,12 @@
 context-menu(class="{opened: opts.menu.opened}" ref="root")
-    label(each="{item in opts.menu.items}" class="{item.type || 'item'} {checkbox: item.type === 'checkbox'} {submenu: item.submenu}" disabled="{item.disabled}" onclick="{onItemClick}")
+    a(
+        each="{item in opts.menu.items}"
+        href="#"
+        class="{item.type || 'item'} {checkbox: item.type === 'checkbox'} {submenu: item.submenu}"
+        disabled="{item.disabled}"
+        onclick="{onItemClick}"
+        tabindex="{'-1': item.type === 'separator'}"
+    )
         i(class="icon-{item.icon instanceof Function? item.icon() : item.icon}" if="{item.icon && item.type !== 'separator' && item.type !== 'checkbox'}")
         input(type="checkbox" checked="{item.checked}" if="{item.type === 'checkbox'}")
         span(if="{!item.type !== 'separator'}") {item.label}
@@ -7,6 +14,7 @@ context-menu(class="{opened: opts.menu.opened}" ref="root")
     script.
         var noFakeClicks;
         this.onItemClick = e => {
+            e.preventDefault();
             if (e.item.item.click) { // first `item` is a riot's reference to all looped vars, second is var's name in markup
                 e.item.item.click();
             }
@@ -29,6 +37,7 @@ context-menu(class="{opened: opts.menu.opened}" ref="root")
             }
             this.opts.menu.opened = true;
             this.update();
+            this.root.querySelector('a').focus();
         };
 
         this.toggle = () => {
