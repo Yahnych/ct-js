@@ -22,11 +22,13 @@ context-menu(class="{opened: opts.menu.opened}" ref="root")
             setTimeout(() => {
                 noFakeClicks = false;
             }, 100);
+            y -= this.root.parentNode.getBoundingClientRect().y;
             if (x !== void 0 && y !== void 0) {
                 this.root.style.left = x + 'px';
                 this.root.style.top = y + 'px';
             }
             this.opts.menu.opened = true;
+            this.update();
         };
 
         this.toggle = () => {
