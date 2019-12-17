@@ -18,6 +18,7 @@
             [grax, gray] = texture.axis;
         } else {
             img = glob.texturemap[-1];
+            texture = img.g;
             w = h = 32;
             ox = oy = 0;
             grax = gray = 16;
