@@ -165,10 +165,7 @@ main-menu.flexcol
             runCtExport(currentProject, sessionStorage.projdir)
             .then(path => {
                 if (previewWindow && !previewWindow.closed) {
-                    previewWindow.show();
-                    previewWindow.focus();
-                    previewWindow.document.getElementById('thePreview').reload();
-                    return;
+                    previewWindow.close();
                 }
                 previewWindow = window.open(
                     `preview.html?title=${encodeURIComponent(currentProject.settings.title || 'ct.js game')}&port=${server.address().port}`,
