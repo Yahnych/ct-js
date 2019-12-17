@@ -1,7 +1,7 @@
 context-menu(class="{opened: opts.menu.opened}" ref="root")
     a(
         each="{item in opts.menu.items}"
-        href="#"
+        href="javascript: void;"
         class="{item.type || 'item'} {checkbox: item.type === 'checkbox'} {submenu: item.submenu}"
         disabled="{item.disabled}"
         onclick="{onItemClick}"
@@ -17,13 +17,14 @@ context-menu(class="{opened: opts.menu.opened}" ref="root")
         var noFakeClicks;
         this.onItemClick = e => {
             e.preventDefault();
+            if (e.item.item.submenu && e.target.closest('context-menu') === this.root) { // prevent closing if a label with a submenu was clicked *directly*
+                e.stopPropagation();
+            }
             if (e.item.item.click) { // first `item` is a riot's reference to all looped vars, second is var's name in markup
                 e.item.item.click();
             }
             if (!e.item.item.submenu) { // autoclose on regular items
                 this.opts.menu.opened = false;
-            } else if (e.target.closest('context-menu') === this.root) { // prevent closing if a label with a submenu was clicked *directly*
-                e.stopPropagation();
             }
         };
 
