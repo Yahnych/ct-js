@@ -1,7 +1,7 @@
 context-menu(class="{opened: opts.menu.opened}" ref="root")
     a(
         each="{item in opts.menu.items}"
-        href="javascript: void;"
+        href="javascript: void 0;"
         class="{item.type || 'item'} {checkbox: item.type === 'checkbox'} {submenu: item.submenu}"
         disabled="{item.disabled}"
         onclick="{onItemClick}"
@@ -22,6 +22,7 @@ context-menu(class="{opened: opts.menu.opened}" ref="root")
             }
             if (e.item.item.click) { // first `item` is a riot's reference to all looped vars, second is var's name in markup
                 e.item.item.click();
+                e.stopPropagation();
             }
             if (!e.item.item.submenu) { // autoclose on regular items
                 this.opts.menu.opened = false;
