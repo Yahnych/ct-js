@@ -22,7 +22,7 @@ types-panel.panel.view
                 onlong-press="{onTypeContextMenu}"
             )
                 span {type.name}
-                img(src="{type.texture !== -1 ? (glob.texturemap[type.texture].src.split('?')[0] + '_prev.png?' + getTypeTextureRevision(type)) : '/data/img/notexture.png'}")
+                img(src="{type.texture !== -1 ? (glob.texturemap[type.texture].src.split('?')[0] + '_prev.png?' + getTypeTextureRevision(type)) : 'data/img/notexture.png'}")
     type-editor(if="{editingType}" type="{editedType}")
     context-menu(menu="{typeMenu}" ref="typeMenu")
     script.

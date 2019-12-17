@@ -110,7 +110,9 @@ main-menu.flexcol
         };
         this.ctClick = (e) => {
             this.refreshLatestProject();
-            this.refs.catMenu.toggle();
+            if (e) {
+                this.refs.catMenu.toggle();
+            }
         };
         this.saveProject = () => {
             return fs.outputJSON(sessionStorage.projdir + '.ict', currentProject, {
