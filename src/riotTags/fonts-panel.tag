@@ -112,10 +112,9 @@ fonts-panel.flexfix.tall.fifty
          */
         this.fontImport = e => { // e.target:input[type="file"]
             const generateGUID = require('./data/node_requires/generateGUID');
-            var i;
-            files = e.target.value.split(';');
+            const files = [...e.target.files].map(file => file.path);
             e.target.value = '';
-            for (i = 0; i < files.length; i++) {
+            for (let i = 0; i < files.length; i++) {
                 if (/\.ttf/gi.test(files[i])) {
                     let id = generateGUID();
                     this.loadFont(

@@ -275,10 +275,11 @@ modules-panel.panel.view
         };
 
         this.importModules = async (e) => {
-            const value = e.target.value;
-            if (value.length === 0) {
+            const files = e.target.files;
+            if (files.length === 0) {
                 return;
             }
+            const value = files[0].path;
             e.target.value = '';
             let parentName = null;
             let moduleName = null;

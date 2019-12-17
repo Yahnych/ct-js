@@ -174,9 +174,8 @@ textures-panel.panel.view
          * An event fired when user attempts to add files from a file manager (by clicking an "Import" button)
          */
         this.textureImport = e => { // input[type="file"]
-            var i;
-            files = e.target.value.split(';');
-            for (i = 0; i < files.length; i++) {
+            const files = [...e.target.files].map(file => file.path);
+            for (let i = 0; i < files.length; i++) {
                 if (/\.(jpg|gif|png|jpeg)/gi.test(files[i])) {
                     let id = generateGUID();
                     this.loadImg(
