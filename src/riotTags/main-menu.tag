@@ -257,7 +257,9 @@ main-menu.flexcol
             items: [{
                 label: window.languageJSON.common.save,
                 icon: 'save',
-                click: this.saveProject
+                click: this.saveProject,
+                hotkey: 'Control+s',
+                hotkeyLabel: 'Ctrl+S'
             }, {
                 label: this.voc.openIncludeFolder,
                 click: e => {

@@ -6,10 +6,12 @@ context-menu(class="{opened: opts.menu.opened}" ref="root")
         disabled="{item.disabled}"
         onclick="{onItemClick}"
         tabindex="{'-1': item.type === 'separator'}"
+        data-hotkey="{item.hotkey}"
     )
         i(class="icon-{item.icon instanceof Function? item.icon() : item.icon}" if="{item.icon && item.type !== 'separator' && item.type !== 'checkbox'}")
         input(type="checkbox" checked="{item.checked}" if="{item.type === 'checkbox'}")
         span(if="{!item.type !== 'separator'}") {item.label}
+        span.hotkey(if="{!item.type !== 'separator' && item.hotkey}") ({item.hotkeyLabel || item.hotkey})
         context-menu(if="{item.submenu && item.type !== 'separator'}" menu="{item.submenu}")
     script.
         var noFakeClicks;
