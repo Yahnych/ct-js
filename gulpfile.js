@@ -309,7 +309,13 @@ declare namespace`))
      */
     namespace`))
     .pipe(gulp.dest('./app/data/typedefs/'));
-const bakeTypedefs = gulp.series([bakeCtTypedefs, concatTypedefs]);
+
+// electron-builder ignores .d.ts files no matter how you describe your app's contents.
+const copyPixiTypedefs = () => gulp.src('./app/node_modules/pixi.js/pixi.js.d.ts')
+    .pipe(gulp.dest('./app/data/typedefs'));
+
+const bakeTypedefs = gulp.series([bakeCtTypedefs, concatTypedefs, copyPixiTypedefs]);
+
 
 const build = gulp.parallel([compilePug, compileStylus, compileScripts, copyRequires, bakeTypedefs]);
 

@@ -84,11 +84,12 @@
             // eslint-disable-next-line no-await-in-loop
             await migration.process(project);
         }
+
         // Unfortunately, recent versions of eslint give false positives on this line
         // @see https://github.com/eslint/eslint/issues/11900
         // @see https://github.com/eslint/eslint/issues/11899
         // eslint-disable-next-line require-atomic-updates
-        project.ctjsVersion = require(path.join(__dirname, 'package.json')).version;
+        project.ctjsVersion = require('electron').remote.app.getVersion();
     };
 
     /**
