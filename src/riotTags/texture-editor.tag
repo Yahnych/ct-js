@@ -732,7 +732,7 @@ texture-editor.panel.view
                     w*k, h*k
                 );
                 var data = c.toDataURL().replace(/^data:image\/\w+;base64,/, '');
-                var buf = new Buffer(data, 'base64');
+                var buf = Buffer.from(data, 'base64');
                 fs.writeFile(destination, buf, function(err) {
                     if (err) {
                         console.log(err);
