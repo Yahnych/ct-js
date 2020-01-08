@@ -131,6 +131,7 @@
         "successZipExport": "Successfully exported to {0}.",
         "successZipProject": "Successfully zipped the project to {0}.",
         "ui": "UI",
+        "fx": "FX",
         "theme": "Theme",
         "themeDay": "Light",
         "themeNight": "Dark",
@@ -293,6 +294,64 @@
         "fontweight": "Font weight:",
         "italic": "Is italic?",
         "reimport": "Reimport"
+    },
+    "particleEmitters": {
+        "emittersHeading": "Particle emitters",
+
+        "from": "From:",
+        "to": "To:",
+
+        "appearanceHeading": "Appearance",
+        "texture": "Texture:",
+        "selectTexture": "Select…",
+        "importBuiltin": "Import default…",
+        "color": "Color:",
+        "stepped": "Stepped",
+        "alpha": "Opacity:",
+        "scale": "Scale:",
+        "minimumSize": "Minimum size:",
+        "blendMode": "Blend mode:",
+        "regular": "Regular",
+        "darken": "Darken",
+        "lighten": "Lighten",
+        "burn": "Burn",
+
+        "motionHeading": "Motion",
+        "speed": "Speed:",
+        "minimumSpeed": "Minimum speed:",
+        "startingDirection": "Starting direction",
+        "rotationSpeed": "Rotation speed",
+
+        "spawningHeading": "Spawning",
+
+        "timeBetweenBursts": "Time between bursts:",
+
+        "spawnAtOnce": "Spawn at once:",
+        "chanceToSpawn": "Chance to spawn:",
+        "maxParticles": "Max particles:",
+        "lifetime": "Particle lifetime, sec.:",
+        "prewarmDelay": "Prewarm / delay, sec.:",
+
+        "positioningHeading": "Positioning",
+        "spawnType": "Type:",
+        "spawnShapes": {
+            "point": "Point",
+            "rectangle": "Rectangle",
+            "circle": "Circle",
+            "ring": "Ring",
+            "star": "Star"
+        },
+        "width": "Width:",
+        "height": "Height:",
+        "radius": "Radius:",
+
+        "starPoints": "Points:",
+
+        "relativeEmitterPosition": "Position relative to other emitters:",
+        "posX": "X:",
+        "posY": "Y:",
+        "addEmitter": "Add another emitter",
+        "reset": "Reset preview"
     },
     "types": {
         "create": "Create"

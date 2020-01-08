@@ -77,9 +77,8 @@ room-editor.panel.view
 
          this.gutterMouseDown = e => {
             this.draggingGutter = true;
-            //document.body.appendChild(catcher);
         };
-        document.addEventListener('mousemove', e => {
+        const gutterMove = e => {
             if (!this.draggingGutter) {
                 return;
             }
@@ -93,13 +92,19 @@ room-editor.panel.view
                 canvas.height = sizes.height;
             }
             this.refreshRoomCanvas();
-        });
-        document.addEventListener('mouseup', () => {
+        };
+        const gutterUp = () => {
             if (this.draggingGutter) {
                 this.draggingGutter = false;
                 //updateCanvasSize();
                 //document.body.removeChild(catcher);
             }
+        };
+        document.addEventListener('mousemove', gutterMove);
+        document.addEventListener('mouseup', gutterUp);
+        this.on('unmount', () => {
+            document.removeEventListener('mousemove', gutterMove);
+            document.removeEventListener('mouseup', gutterUp);
         });
 
         this.editingCode = false;
