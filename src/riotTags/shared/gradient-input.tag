@@ -1,2 +1,0 @@
-gradient-input
-    script.

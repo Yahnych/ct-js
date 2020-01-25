@@ -10,6 +10,19 @@ const getTextureFromId = id => {
 
 let textureLoader;
 
+const getTexturePreview = function (texture, x2) {
+    if (texture === -1) {
+        return 'data/img/notexture.png';
+    }
+    if (typeof texture === 'string') {
+        texture = getTextureFromId(texture);
+    }
+    if (x2) {
+        return `file://${sessionStorage.projdir}/img/${texture.origname}_prev@2.png?cache=${texture.lastmod}`;
+    }
+    return `file://${sessionStorage.projdir}/img/${texture.origname}_prev.png?cache=${texture.lastmod}`;
+};
+
 const loadBaseTextureForCtTexture = texture => new Promise((resolve, reject) => {
     const PIXI = require('pixi.js-legacy');
 
@@ -108,5 +121,6 @@ const getPixiTexture = async function (texture, frame, allowMinusOne) {
 module.exports = {
     clearPixiTextureCache,
     getTextureFromId,
+    getTexturePreview,
     getPixiTexture
 };

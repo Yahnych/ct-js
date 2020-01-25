@@ -42,7 +42,7 @@ fx-panel.panel.view
                 slice = id.split('-').pop();
 
             const tandem = {
-                name: 'Emitter_' + slice,
+                name: 'Tandem_' + slice,
                 origname: 'pt' + slice,
 
                 emitters: [defaultEmitter]

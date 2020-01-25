@@ -59,7 +59,9 @@ textures-panel.panel.view
         this.editing = false;
         this.dropping = false;
 
-        this.thumbnails = texture => `file://${sessionStorage.projdir}/img/${texture.origname}_prev.png?cache=${texture.lastmod}`;
+        const {getTexturePreview} = require('./data/node_requires/resources/textures');
+        // this.thumbnails = texture => `file://${sessionStorage.projdir}/img/${texture.origname}_prev.png?cache=${texture.lastmod}`;
+        this.thumbnails = getTexturePreview;
 
         this.fillTextureMap = () => {
             glob.texturemap = {};

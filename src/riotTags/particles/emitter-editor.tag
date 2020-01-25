@@ -1,4 +1,7 @@
 emitter-editor.panel.pad
+    .emitter-editor-aHeader
+        img.emitter-editor-aTexture(src="{getPreview()}")
+        h3 {voc.emitterHeading} {opts.emitter.uid.split('-').pop()}
 
     h3.nmt {voc.appearanceHeading}
 
@@ -32,7 +35,9 @@ emitter-editor.panel.pad
         label
             b {voc.scale}
             curve-editor(
-                min="0" max="5" easing="{opts.emitter.settings.scale.isStepped? 'none' : 'linear'}"
+                min="0" max="5"
+                valuestep="0.1"
+                easing="{opts.emitter.settings.scale.isStepped? 'none' : 'linear'}"
                 curve="{opts.emitter.settings.scale.list}"
                 lockstarttime="true" lockendtime="true"
                 onchange="{updateScaleCurve}"
@@ -66,11 +71,19 @@ emitter-editor.panel.pad
         label
             b {voc.speed}
             curve-editor(
-                min="0" max="2500" easing="{opts.emitter.settings.speed.isStepped? 'none' : 'linear'}"
+                min="0" max="2500"
+                valuestep="10"
+                easing="{opts.emitter.settings.speed.isStepped? 'none' : 'linear'}"
                 curve="{opts.emitter.settings.speed.list}"
                 lockstarttime="true" lockendtime="true"
                 onchange="{updateSpeedCurve}"
             )
+        label.checkbox
+            input(
+                type="checkbox" checked="{opts.emitter.settings.speed.isStepped}"
+                onchange="{wireAndReset('this.opts.emitter.settings.speed.isStepped')}"
+            )
+            b {voc.stepped}
         label
             b {voc.minimumSpeed}
             input(
@@ -257,6 +270,11 @@ emitter-editor.panel.pad
         this.namespace = 'particleEmitters';
         this.mixin(window.riotVoc);
         this.mixin(window.riotWired);
+
+        const {getTexturePreview} = require('./data/node_requires/resources/textures');
+        this.getPreview = () => {
+            return getTexturePreview(this.opts.emitter.texture);
+        };
 
         this.wireAndReset = path => e => {
             this.wire(path)(e);
