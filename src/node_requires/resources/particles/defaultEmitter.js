@@ -3,8 +3,11 @@ const emitter = {
     settings: {
         alpha: {
             list: [{
-                value: 1,
+                value: 0,
                 time: 0
+            }, {
+                value: 1,
+                time: 0.5
             }, {
                 value: 0,
                 time: 1
@@ -25,6 +28,9 @@ const emitter = {
             list: [{
                 value: 'ffffff',
                 time: 0
+            }, {
+                value: 'ffffff',
+                time: 0.5
             }, {
                 value: 'ffffff',
                 time: 1

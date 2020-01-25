@@ -13,23 +13,28 @@ emitter-editor.panel.pad
 
     fieldset
         label
-            b {voc.color}
-            gradient-input(gradient="{opts.emitter.settings.color.list}" type="color" stepped="{opts.emitter.settings.color.isStepped}")
+            b {voc.colorAndOpacity}
+            curve-editor(
+                easing="{opts.emitter.settings.alpha.isStepped? 'none' : 'linear'}"
+                coloreasing="{opts.emitter.settings.color.isStepped? 'none' : 'linear'}"
+                curve="{opts.emitter.settings.alpha.list}"
+                colorcurve="{opts.emitter.settings.color.list}"
+                lockstarttime="true" lockendtime="true"
+                onchange="{updateColorCurve}"
+                type="color"
+            )
         label.checkbox
             input(
                 type="checkbox" checked="{opts.emitter.settings.color.isStepped}"
                 onchange="{wireAndReset('this.opts.emitter.settings.color.isStepped')}"
             )
-            b {voc.stepped}
-        label
-            b {voc.alpha}
-            gradient-input(gradient="{opts.emitter.settings.alpha.list}" type="float" stepped="{opts.emitter.settings.alpha.isStepped}")
+            b {voc.steppedColor}
         label.checkbox
             input(
                 type="checkbox" checked="{opts.emitter.settings.alpha.isStepped}"
                 onchange="{wireAndReset('this.opts.emitter.settings.alpha.isStepped')}"
             )
-            b {voc.stepped}
+            b {voc.steppedAlpha}
 
     fieldset
         label
@@ -333,6 +338,33 @@ emitter-editor.panel.pad
             } else {
                 window.signals.trigger('emitterResetRequest');
             }
+        };
+        this.updateColorCurve = (alphaCurve, colorCurve) => {
+            if (this.opts.emittermap && (this.opts.emitter.uid in this.opts.emittermap)) {
+                const emtInst = this.opts.emittermap[this.opts.emitter.uid];
+                const {PropertyNode} = require('pixi-particles');
+
+                emtInst.startColor = PropertyNode.createList(this.opts.emitter.settings.color);
+                emtInst.startAlpha = PropertyNode.createList(this.opts.emitter.settings.alpha);
+            } else {
+                window.signals.trigger('emitterResetRequest');
+            }
+        };
+        /* Expects color and alpha to be the same length */
+        this.combineAlphaAndColors = () => {
+            const Color = net.brehaut.Color;
+            const combinedList = [];
+            const emt = this.opts.emitter.settings;
+            const l = Math.min(emt.color.list.length, emt.alpha.list.length);
+            for (let i = 0; i < l; i++) {
+                const color = Color('#'+emt.color.list[i].value);
+                color.alpha = emt.alpha.list[i].value;
+                combinedList.push({
+                    value: color.toString(),
+                    time: emt.color.list[i].time
+                });
+            }
+            return combinedList;
         };
 
         this.changeSpawnType = e => {
