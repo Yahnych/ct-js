@@ -76,7 +76,8 @@ const emitter = {
             x: 0,
             y: 0,
             r: 32
-        }
+        },
+        delay: 0
     }
 };
 

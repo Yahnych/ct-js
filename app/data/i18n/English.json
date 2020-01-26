@@ -329,6 +329,7 @@
         "minimumSpeed": "Minimum speed:",
         "startingDirection": "Starting direction",
         "rotationSpeed": "Rotation speed",
+        "preserveTextureDirection": "Preserve texture rotation",
 
         "spawningHeading": "Spawning",
 

@@ -49,7 +49,7 @@ curve-editor(ref="root")
                     linearGradient(
                         each="{point, ind in opts.colorcurve}"
                         if="{opts.type === 'color' && (ind < opts.curve.length - 1)}"
-                        riot-id="grad{ind}to{ind+1}"
+                        riot-id="{uid}grad{ind}to{ind+1}"
                         x1="0%" y1="0%" x2="100%" y2="0%"
                     )
                         stop(offset="0%" style="\
@@ -79,7 +79,7 @@ curve-editor(ref="root")
                             {getPointLeft(point)},{getPointTop(point)}\
                             {getPointLeft(curve[ind+1])},{getPointTop(parent.opts.easing === 'none'? point : curve[ind+1]) + 0.00001}\
                         "
-                        stroke="{parent.opts.type === 'color' && 'url(#grad'+ind+'to'+(ind+1)+')'}"
+                        stroke="{parent.opts.type === 'color' && 'url(#'+uid+'grad'+ind+'to'+(ind+1)+')'}"
                         if="{ind !== curve.length - 1}"
                         onmousedown="{addPointOnSegment}"
                         title="{voc.curveLineHint}"
@@ -132,6 +132,8 @@ curve-editor(ref="root")
         this.mixin(window.riotVoc);
         this.mixin(window.riotWired);
         const Color = net.brehaut.Color;
+
+        this.uid = require('./data/node_requires/generateGUID')();
 
         this.wireAndChange = path => e => {
             this.wire(path)(e);
@@ -285,8 +287,14 @@ curve-editor(ref="root")
             const ind = o.curve.indexOf(e.item.point);
             if (ind !== -1) {
                 const spliced = o.curve.splice(ind, 1);
+                if (this.opts.type === 'color') {
+                    o.colorcurve.splice(ind, 1);
+                }
                 if (spliced[0] === this.selectedPoint) {
                     this.selectedPoint = o.curve[0];
+                    if (this.opts.type === 'color') {
+                        this.selectedColorPoint = o.colorcurve[0];
+                    }
                 }
                 if (this.opts.onchange) {
                     this.opts.onchange(this.curve, this.movedPoint);
